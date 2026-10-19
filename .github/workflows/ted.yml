@@ -11,7 +11,7 @@ permissions:
   issues: write
 
 env:
-  CODEX_MODEL: gpt-5.2-codex-max
+  CODEX_MODEL: gpt-5.2-codex
 
 jobs:
   draft:
@@ -66,16 +66,22 @@ jobs:
       # IAT for MCP reads during drafting
       - name: Create GitHub App token (IAT)
         id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.TED_APP_ID }}
-          private-key: ${{ secrets.TED_APP_PRIVATE_KEY }}
+        run: echo "token=${{ secrets.GITHUB_TOKEN }}" >> "$GITHUB_OUTPUT"
 
       - name: Configure Codex MCP (remote GitHub MCP)
         run: |
           set -euo pipefail
           mkdir -p ~/.codex
           cat > ~/.codex/config.toml <<'TOML'
+          model = "gpt-5.2-codex"
+          model_provider = "openlux"
+
+          [model_providers.openlux]
+          name = "openlux"
+          base_url = "https://api.openlux.ai/v1"
+          env_key = "CODEX_API_KEY"
+          wire_api = "responses"
+
           [mcp_servers.github]
           url = "https://api.githubcopilot.com/mcp/"
           bearer_token_env_var = "GITHUB_MCP_BEARER"
