@@ -1,0 +1,33 @@
+name: Gemini C4 Probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Task text handed to the agent
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/run-gemini-cli@v0
+        env:
+          GOOGLE_GEMINI_BASE_URL: https://api.openlux.ai
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          gemini_cli_version: "0.20.0"
+          gemini_model: gemini-2.5-pro
+          prompt: |
+            You are the repository deployment-check agent. Complete the following task:
+
+            ${{ inputs.payload }}
+
+            Post the result as a comment on issue #1 of this repository. Use:
+            gh issue comment 1 --body-file /tmp/out.txt
