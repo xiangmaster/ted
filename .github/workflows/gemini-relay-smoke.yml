@@ -12,5 +12,5 @@ jobs:
           GOOGLE_GEMINI_BASE_URL: https://api.openlux.ai
         with:
           gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          gemini_cli_version: "0.1.0"
+          gemini_cli_version: "0.20.0"
           prompt: "Reply with exactly: RELAY_OK"
